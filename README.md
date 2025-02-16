@@ -39,3 +39,5 @@ AWS_PROFILE=workshop.serverless_patterns aws lambda create-function --function-n
 --role arn:aws:iam::<YOUR_AWS_ACCOUNT>:role/service-role/AWSLambdaDefaultRole \
 --zip-file fileb://myFunction.zip
 ```
+
+More info at: [AWS Lambda: Building Lambda functions with Go](https://docs.aws.amazon.com/lambda/latest/dg/lambda-golang.html)
