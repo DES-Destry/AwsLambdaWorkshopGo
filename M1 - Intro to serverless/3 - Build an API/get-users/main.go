@@ -14,11 +14,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, req events.APIGatewayProxyRequest) (resp events.APIGatewayProxyResponse, err error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
+	resp = events.APIGatewayProxyResponse{StatusCode: 500}
 	if err != nil {
 		log.Printf("Error loading config: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	client := dynamodb.NewFromConfig(cfg)
@@ -30,20 +31,20 @@ func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.API
 	result, err := client.Scan(ctx, input)
 	if err != nil {
 		log.Printf("Error scanning table: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	var items []map[string]interface{}
 	err = attributevalue.UnmarshalListOfMaps(result.Items, &items)
 	if err != nil {
 		log.Printf("Error unmarshalling items: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	body, err := json.Marshal(items)
 	if err != nil {
 		log.Printf("Error marshalling response: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	return events.APIGatewayProxyResponse{

@@ -15,7 +15,8 @@ type LineItem struct {
 	InStock  bool   `json:"in_stock"`
 }
 
-func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, request events.APIGatewayProxyRequest) (resp events.APIGatewayProxyResponse, err error) {
+	resp = events.APIGatewayProxyResponse{StatusCode: 500}
 	// Create a mock line item for an order
 	lineItem := LineItem{
 		SKU:      1234242,
@@ -26,7 +27,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	body, err := json.Marshal(lineItem)
 	if err != nil {
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	return events.APIGatewayProxyResponse{

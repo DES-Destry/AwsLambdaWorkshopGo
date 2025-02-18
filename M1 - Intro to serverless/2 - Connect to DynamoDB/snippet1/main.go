@@ -14,14 +14,15 @@ import (
 	"github.com/google/uuid"
 )
 
-func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, request events.APIGatewayProxyRequest) (resp events.APIGatewayProxyResponse, err error) {
 	tableName := "serverless_workshop_intro"
+	resp = events.APIGatewayProxyResponse{StatusCode: 500}
 
 	// Load AWS configuration
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		log.Printf("failed to load config: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	// Create DynamoDB client
@@ -67,14 +68,14 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	_, err = client.BatchWriteItem(ctx, input)
 	if err != nil {
 		log.Printf("failed to batch write items: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	result := fmt.Sprintf("Success. Added %d people to %s.", len(people), tableName)
 	responseBody, err := json.Marshal(map[string]string{"message": result})
 	if err != nil {
 		log.Printf("failed to marshal response: %v", err)
-		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+		return
 	}
 
 	return events.APIGatewayProxyResponse{
